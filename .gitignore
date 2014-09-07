@@ -1,0 +1,38 @@
+# Python Bytecode
+*.py[co]
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+.Python
+
+# Installer logs
+pip-log.txt
+logs/
+
+# Translations
+*.mo
+
+# Special Files
+ignore*
+TODO
+local.py
+local.txt
+
+#Rope for ViM
+.ropeproject
+
+#coverage folders
+.coverage
+cover
+
+#Local environment variables
+.env
