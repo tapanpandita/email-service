@@ -59,7 +59,6 @@ class SendgridBackend(BaseEmailBackend):
     def _send(self, message):
         payload = self._create_payload(message)
         url = urljoin(self.host, self.api_urls.get('send_email'))
-        raise ServerException(500, {})
         response = self.requests_session.post(
             url, data=payload,
         )
