@@ -1,0 +1,2 @@
+'''Staging configuration'''
+DEBUG = True

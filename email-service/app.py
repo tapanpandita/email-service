@@ -1,5 +1,4 @@
-import json
-
+'''The email service flask app'''
 import requests
 
 from flask import Flask, request, jsonify
@@ -10,7 +9,8 @@ from mail.exceptions import ClientException
 
 
 app = Flask(__name__)
-app.config.from_object('config')
+app.config.from_object('config.base')
+app.config.from_envvar('EMAIL_SERVICE_SETTINGS')
 app.requests_session = requests.Session()
 
 
