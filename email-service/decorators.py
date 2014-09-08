@@ -1,10 +1,12 @@
-'''Misc utility functions that can be used throughout the app'''
+'''Misc decorators that can be used throughout the app'''
 from functools import wraps
 
 import jsonschema
 
-from flask import request
 from werkzeug.exceptions import UnsupportedMediaType, NotAcceptable
+from flask import request
+
+from errors import ValidationError
 
 
 def consumes(*content_types):
@@ -72,7 +74,12 @@ def json_validate(schema):
                     format_checker=jsonschema.FormatChecker(),
                 )
             except jsonschema.ValidationError, excp:
-                invalid_field = excp.path[0]
+
+                try:
+                    invalid_field = excp.path[0]
+                except IndexError:
+                    invalid_field = 'request'
+
                 error_message = excp.message
                 raise ValidationError(invalid_field, error_message)
 

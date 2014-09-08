@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify
 
 from decorators import consumes, produces, json_validate
 from schemas import email_api_schema
+from errors import ValidationError
 from mail.message import EmailMessage
 from mail.exceptions import ClientException
 
@@ -22,8 +23,8 @@ def health():
     return jsonify({'status': 'ok'})
 
 
-@json_validate(email_api_schema)
 @app.route('/api/v1/emails/', methods=['POST'])
+@json_validate(email_api_schema)
 @consumes('application/json')
 @produces('application/json')
 def send_email():
@@ -45,6 +46,26 @@ def send_email():
         return jsonify({'message': 'error'}), 500
 
     return jsonify({'message': 'success', 'backend': backend.name})
+
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(error):
+    '''
+    Returns a 400 response with error message when validation error is raised.
+    '''
+    status_code = 400
+    message = error.message
+    field = error.field
+
+    payload = {
+        'message': 'error',
+        'error': {
+            'field': field,
+            'message': message,
+        }
+    }
+
+    return jsonify(payload), status_code
 
 
 if __name__ == '__main__':
