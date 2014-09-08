@@ -1,3 +1,5 @@
+'''API json schemas'''
+
 email_api_schema = {
     'type': 'object',
     'properties': {

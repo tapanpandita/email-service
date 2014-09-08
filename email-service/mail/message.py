@@ -1,3 +1,4 @@
+'''Defines email message related models'''
 from flask import current_app as app
 
 from .exceptions import ServerException
