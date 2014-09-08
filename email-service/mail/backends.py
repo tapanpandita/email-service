@@ -28,6 +28,7 @@ class BaseEmailBackend(object):
 
 
 class SendgridBackend(BaseEmailBackend):
+    name = 'sendgrid'
 
     def __init__(self, host=None, api_user=None, api_key=None,
                  requests_session=None):
@@ -56,11 +57,21 @@ class SendgridBackend(BaseEmailBackend):
 
         return payload
 
+    def _make_request(self, url, payload=None, headers=None, auth=None):
+        payload = payload or {}
+        headers = headers or {}
+        auth = auth or ()
+
+        response = self.requests_session.post(
+            url, data=payload, headers=headers, auth=auth,
+        )
+        return response
+
     def _send(self, message):
         payload = self._create_payload(message)
         url = urljoin(self.host, self.api_urls.get('send_email'))
-        response = self.requests_session.post(
-            url, data=payload,
+        response = self._make_request(
+            url, payload=payload,
         )
 
         if response.status_code == 400:
@@ -87,6 +98,7 @@ class SendgridBackend(BaseEmailBackend):
 
 
 class MailgunBackend(BaseEmailBackend):
+    name = 'mailgun'
 
     def __init__(self, host=None, api_user=None, api_key=None,
                  requests_session=None):
@@ -122,12 +134,22 @@ class MailgunBackend(BaseEmailBackend):
 
         return payload
 
+    def _make_request(self, url, payload=None, headers=None, auth=None):
+        payload = payload or {}
+        headers = headers or {}
+        auth = auth or ()
+
+        response = self.requests_session.post(
+            url, data=payload, headers=headers, auth=auth,
+        )
+        return response
+
     def _send(self, message):
         payload = self._create_payload(message)
         url = urljoin(self.host, self.api_urls.get('send_email'))
         auth = (self.api_user, self.api_key)
-        response = self.requests_session.post(
-            url, data=payload, auth=auth,
+        response = self._make_request(
+            url, payload=payload, auth=auth,
         )
 
         if response.status_code == 400:
