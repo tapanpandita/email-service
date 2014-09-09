@@ -1,5 +1,7 @@
 Email Service
 =============
+[![Build Status](https://travis-ci.org/tapanpandita/email-service.svg)](https://travis-ci.org/tapanpandita/email-service/)
+[![Code Health](https://landscape.io/github/tapanpandita/email-service/master/landscape.png)](https://landscape.io/github/tapanpandita/email-service/master)
 
 The email service is a simple Python/Flask service which is a thin wrapper around sendgrid and mailgun APIs. It seamlessly transitions over from one provider to the other in case one stops responding.
 
