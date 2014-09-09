@@ -16,17 +16,17 @@ app.config.from_envvar('EMAIL_SERVICE_SETTINGS')
 app.requests_session = requests.Session()
 
 
-@app.route('/health', methods=['GET'])
+@app.route('/api/v1/health', methods=['GET'])
 @produces('application/json')
 def health():
     '''Check the status of the service.'''
     return jsonify({'status': 'ok'})
 
 
-@app.route('/api/v1/emails/', methods=['POST'])
-@json_validate(email_api_schema)
+@app.route('/api/v1/emails', methods=['POST'])
 @consumes('application/json')
 @produces('application/json')
+@json_validate(email_api_schema)
 def send_email():
     '''
     Thin wrapper around sendgrid and mailgun apis. Sends emails to provided
@@ -43,7 +43,7 @@ def send_email():
         return jsonify(error), status_code
 
     if not is_sent:
-        return jsonify({'message': 'error'}), 500
+        return jsonify({'message': 'error'}), 502
 
     return jsonify({'message': 'success', 'backend': backend.name})
 
