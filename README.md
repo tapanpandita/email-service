@@ -31,9 +31,13 @@ API spec
 --------
 
 * GET /api/v1/health
+
 Response:
+
 Status Code: 200 OK
+
 Content-Type: application/json
+
 Body:
 ```javascript
 {
@@ -41,8 +45,11 @@ Body:
 }
 ```
 * POST /api/v1/emails
+
 Request:
+
 Content-Type: application/json
+
 Body:
 ```javascript
 {
@@ -65,9 +72,13 @@ Body:
 // One of text or html is required
 ```
 Responses:
+
 Email sent successfully
+
 Status Code: 200 OK
+
 Content-Type: application/json
+
 Body:
 ```javascript
 {
@@ -76,7 +87,9 @@ Body:
 }
 ```
 Reuest payload is invalid
+
 Status Code: 400 Bad Request
+
 Body:
 ```javascript
 {
@@ -88,7 +101,9 @@ Body:
 }
 ```
 Could not send email
+
 Status Code: 502 Bad Gateway
+
 Body:
 ```javascript
 {
