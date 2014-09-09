@@ -1,3 +1,4 @@
+'''Defines email message related models'''
 from flask import current_app as app
 
 from .exceptions import ServerException
@@ -29,11 +30,15 @@ class EmailMessage(object):
 
     def send(self):
         '''Sends the email message using the first backend that works'''
+        is_sent = False
 
         for backend in self.backends:
 
             try:
                 backend().send_messages([self])
-                return
+                is_sent = True
+                return is_sent, backend
             except ServerException:
                 continue
+
+        return is_sent, None

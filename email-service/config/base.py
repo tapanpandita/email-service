@@ -1,3 +1,4 @@
+'''Base configuration for the email service'''
 import os
 
 

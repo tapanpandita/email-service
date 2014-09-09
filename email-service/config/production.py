@@ -1,0 +1,2 @@
+'''Production configuration'''
+DEBUG = False

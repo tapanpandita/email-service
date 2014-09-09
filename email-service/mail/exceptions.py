@@ -1,3 +1,5 @@
+'''Email related Exceptions'''
+
 class BaseEmailException(Exception):
     '''Base class for exceptions related to sending email'''
 

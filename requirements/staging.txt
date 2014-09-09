@@ -1,1 +1,10 @@
 -r base.txt
+
+# Staging deployment server, gunicorn + gevent
+gevent==1.0.1
+greenlet==0.4.3
+gunicorn==19.1.1
+
+# iPython for debugging and such on Heroku
+gnureadline==6.3.3
+ipython==2.2.0

@@ -1,10 +1,23 @@
 language: python
-
 python:
-    - "3.4"
-    - "3.3"
     - "2.7"
-
-install: pip install -r requirements/ci.txt
-
-script: nosetests
+# command to install dependencies
+install: "pip install -r requirements/ci.txt --use-mirrors"
+# script to run before running tests
+before_script:
+    - cd email-service/
+# command to run tests
+script:
+    - nosetests test
+# notification settings
+notifications:
+    email:
+        recipients:
+            - tapan.pandita@gmail.com
+        on_success: change
+        on_failure: always
+# whitelist
+branches:
+    only:
+        - master
+        - develop

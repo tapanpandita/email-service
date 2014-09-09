@@ -2,6 +2,13 @@ Flask==0.10.1
 Jinja2==2.7.3
 MarkupSafe==0.23
 Werkzeug==0.9.6
+aniso8601==0.83
+astroid==1.2.1
 certifi==14.05.14
 itsdangerous==0.24
+jsonschema==2.4.0
+logilab-common==0.62.1
+pytz==2014.7
 requests==2.4.0
+six==1.7.3
+wsgiref==0.1.2

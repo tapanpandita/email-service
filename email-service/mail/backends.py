@@ -28,9 +28,12 @@ class BaseEmailBackend(object):
 
 
 class SendgridBackend(BaseEmailBackend):
+    '''Implements an email backend that uses sendgrid to send emails'''
+    name = 'sendgrid'
 
     def __init__(self, host=None, api_user=None, api_key=None,
                  requests_session=None):
+        '''Initialises with sendgrid config'''
         self.host = host or app.config['SENDGRID_HOST']
         self.api_user = api_user or app.config['SENDGRID_USER']
         self.api_key = api_key or app.config['SENDGRID_API_KEY']
@@ -40,6 +43,7 @@ class SendgridBackend(BaseEmailBackend):
         }
 
     def _create_payload(self, message):
+        '''Creates payload conforming to the sendgrid api'''
         payload = {
             'api_user': self.api_user,
             'api_key': self.api_key,
@@ -56,11 +60,23 @@ class SendgridBackend(BaseEmailBackend):
 
         return payload
 
+    def _make_request(self, url, payload=None, headers=None, auth=None):
+        '''Makes post requests with provided params'''
+        payload = payload or {}
+        headers = headers or {}
+        auth = auth or ()
+
+        response = self.requests_session.post(
+            url, data=payload, headers=headers, auth=auth,
+        )
+        return response
+
     def _send(self, message):
+        '''Helper method that does the actual sending'''
         payload = self._create_payload(message)
         url = urljoin(self.host, self.api_urls.get('send_email'))
-        response = self.requests_session.post(
-            url, data=payload,
+        response = self._make_request(
+            url, payload=payload,
         )
 
         if response.status_code == 400:
@@ -71,6 +87,10 @@ class SendgridBackend(BaseEmailBackend):
         return response
 
     def send_messages(self, email_messages):
+        '''
+        Sends one or more EmailMessage objects and returns the number of email
+        messages sent
+        '''
 
         if not email_messages:
             return
@@ -87,9 +107,12 @@ class SendgridBackend(BaseEmailBackend):
 
 
 class MailgunBackend(BaseEmailBackend):
+    '''Implements an email backend that uses mailgun to send emails'''
+    name = 'mailgun'
 
     def __init__(self, host=None, api_user=None, api_key=None,
                  requests_session=None):
+        '''Initialises with mailgun config'''
         self.host = host or app.config['MAILGUN_HOST']
         self.api_user = api_user or app.config['MAILGUN_USER']
         self.api_key = api_key or app.config['MAILGUN_API_KEY']
@@ -101,6 +124,7 @@ class MailgunBackend(BaseEmailBackend):
         }
 
     def _create_payload(self, message):
+        '''Creates payload conforming to the mailgun api'''
         payload = {
             'from': '{from_name} <{from_email}>'.format(
                 from_name=message.from_name, from_email=message.from_email,
@@ -122,12 +146,24 @@ class MailgunBackend(BaseEmailBackend):
 
         return payload
 
+    def _make_request(self, url, payload=None, headers=None, auth=None):
+        '''Makes post requests with provided params'''
+        payload = payload or {}
+        headers = headers or {}
+        auth = auth or ()
+
+        response = self.requests_session.post(
+            url, data=payload, headers=headers, auth=auth,
+        )
+        return response
+
     def _send(self, message):
+        '''Helper method that does the actual sending'''
         payload = self._create_payload(message)
         url = urljoin(self.host, self.api_urls.get('send_email'))
         auth = (self.api_user, self.api_key)
-        response = self.requests_session.post(
-            url, data=payload, auth=auth,
+        response = self._make_request(
+            url, payload=payload, auth=auth,
         )
 
         if response.status_code == 400:
@@ -138,6 +174,10 @@ class MailgunBackend(BaseEmailBackend):
         return response
 
     def send_messages(self, email_messages):
+        '''
+        Sends one or more EmailMessage objects and returns the number of email
+        messages sent
+        '''
 
         if not email_messages:
             return
