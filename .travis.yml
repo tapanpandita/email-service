@@ -10,7 +10,10 @@ before_script:
     - export PYTHONPATH=.:$PYTHONPATH
 # command to run tests
 script:
-    - nosetests test
+    - nosetests --with-coverage --cover-package=. test
+# post success scripts to run
+after_success:
+    - coveralls
 # notification settings
 notifications:
     email:
