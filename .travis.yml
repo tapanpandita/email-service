@@ -5,10 +5,15 @@ python:
 install: "pip install -r requirements/ci.txt --use-mirrors"
 # script to run before running tests
 before_script:
-    - cd email-service/
+    - cd email-service
+    - export EMAIL_SERVICE_SETTINGS="config/testing.py"
+    - export PYTHONPATH=.:$PYTHONPATH
 # command to run tests
 script:
-    - nosetests test
+    - nosetests --with-coverage --cover-package=. test
+# post success scripts to run
+after_success:
+    - coveralls
 # notification settings
 notifications:
     email:
