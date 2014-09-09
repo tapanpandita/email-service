@@ -40,17 +40,19 @@ class TestCases(unittest.TestCase):
 
     def test_health_endpoint(self):
         response = self.client.get(
-            '/health', headers={'accept': 'application/json'}
+            '/api/v1/health', headers={'accept': 'application/json'}
         )
         self.assertEquals(response.status_code, 200)
 
     def test_health_endpoint_when_client_doesnt_accept_json(self):
-        response = self.client.get('/health', headers={'accept': 'text/html'})
+        response = self.client.get(
+            '/api/v1/health', headers={'accept': 'text/html'}
+        )
         self.assertEquals(response.status_code, 406)
 
     def test_send_email_endpoint_when_client_doesnt_accept_json(self):
         response = self.client.post(
-            '/api/v1/emails/',
+            '/api/v1/emails',
             data=json.dumps(self.minimum_required_email_payload),
             headers={
                 'content-type': 'application/json',
@@ -61,8 +63,11 @@ class TestCases(unittest.TestCase):
 
     def test_send_email_endpoint_when_content_type_is_not_json(self):
         response = self.client.post(
-            '/api/v1/emails/',
+            '/api/v1/emails',
             data=self.minimum_required_email_payload,
+            headers={
+                'content-type': 'application/x-www-form-urlencoded',
+            }
         )
         self.assertEquals(response.status_code, 415)
 
@@ -74,7 +79,7 @@ class TestCases(unittest.TestCase):
             content_type='application/json',
         )
         response = self.client.post(
-            '/api/v1/emails/',
+            '/api/v1/emails',
             data=json.dumps(self.minimum_required_email_payload),
             headers=self.headers,
         )
@@ -88,7 +93,7 @@ class TestCases(unittest.TestCase):
             content_type='application/json',
         )
         response = self.client.post(
-            '/api/v1/emails/',
+            '/api/v1/emails',
             data=json.dumps(self.full_email_payload),
             headers=self.headers,
         )
@@ -102,7 +107,7 @@ class TestCases(unittest.TestCase):
             content_type='application/json',
         )
         response = self.client.post(
-            '/api/v1/emails/',
+            '/api/v1/emails',
             data=json.dumps(self.incomplete_email_payload),
             headers=self.headers,
         )
@@ -121,7 +126,7 @@ class TestCases(unittest.TestCase):
             content_type='application/json',
         )
         response = self.client.post(
-            '/api/v1/emails/',
+            '/api/v1/emails',
             data=json.dumps(self.minimum_required_email_payload),
             headers=self.headers,
         )
@@ -140,11 +145,11 @@ class TestCases(unittest.TestCase):
             content_type='application/json',
         )
         response = self.client.post(
-            '/api/v1/emails/',
+            '/api/v1/emails',
             data=json.dumps(self.minimum_required_email_payload),
             headers=self.headers,
         )
-        self.assertEquals(response.status_code, 500)
+        self.assertEquals(response.status_code, 502)
 
 
 if __name__ == '__main__':
