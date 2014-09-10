@@ -5,7 +5,7 @@ python:
 install: "pip install -r requirements/ci.txt --use-mirrors"
 # script to run before running tests
 before_script:
-    - cd email-service
+    - cd email_service
     - export EMAIL_SERVICE_SETTINGS="config/testing.py"
     - export PYTHONPATH=.:$PYTHONPATH
 # command to run tests
