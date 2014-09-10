@@ -245,7 +245,7 @@ class TestCases(unittest.TestCase):
         self.mock_sendgrid_response(500, {'message': 'error'})
         self.mock_mailgun_response(401, {'message': 'error'})
         response = self.make_send_email_request(self.incorrect_email_payload)
-        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.status_code, 502)
 
     @responses.activate
     def test_send_email_when_sendgrid_fails_and_mailgun_fails(self):
