@@ -3,9 +3,9 @@ import requests
 
 from flask import Flask, request, jsonify
 
-from decorators import consumes, produces, json_validate
-from schemas import email_api_schema
-from errors import ValidationError
+from email_service.decorators import consumes, produces, json_validate
+from email_service.schemas import email_api_schema
+from email_service.errors import ValidationError
 from mail.message import EmailMessage
 from mail.exceptions import ClientException
 
@@ -35,12 +35,7 @@ def send_email():
     request_payload = request.get_json()
 
     message = EmailMessage(**request_payload)
-
-    try:
-        is_sent, backend = message.send()
-    except ClientException, excp:
-        status_code, error = excp
-        return jsonify(error), status_code
+    is_sent, backend = message.send()
 
     if not is_sent:
         return jsonify({'message': 'error'}), 502
@@ -66,6 +61,18 @@ def handle_validation_error(error):
     }
 
     return jsonify(payload), status_code
+
+
+@app.errorhandler(ClientException)
+def handle_client_exception(error):
+    '''
+    Returns the appropriate status code and message if there is an error in the
+    data posted to the email providers.
+    '''
+    status_code = error.status_code
+    error_message = error.error_message
+
+    return jsonify(error_message), status_code
 
 
 if __name__ == '__main__':
