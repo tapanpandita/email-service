@@ -4,7 +4,7 @@ Email Service
 [![Coverage Status](https://img.shields.io/coveralls/tapanpandita/email-service.svg)](https://coveralls.io/r/tapanpandita/email-service)
 [![Code Health](https://landscape.io/github/tapanpandita/email-service/master/landscape.png)](https://landscape.io/github/tapanpandita/email-service/master)
 
-The email service is a simple Python/Flask service which is a thin wrapper around sendgrid and mailgun APIs. It seamlessly transitions over from one provider to the other in case one stops responding.
+The email service is a simple Python/Flask service which is a thin wrapper around sendgrid and mailgun APIs. It seamlessly transitions over from one provider to the other in case one stops responding. This project implements the backend API only.
 
 
 Using the service
@@ -121,3 +121,4 @@ TODOs
 3. Adding support for attachments and custom headers
 4. Adding unit tests for the mail package
 5. Using a better tool than jsonschema for api validation. Jsonschema doesn't seem extendable.
+6. Sphinx Documentation
