@@ -1,6 +1,7 @@
 from urlparse import urljoin
 
 import requests
+from requests.exceptions import ConnectionError
 
 from flask import current_app as app
 
@@ -29,6 +30,7 @@ class BaseEmailBackend(object):
 
 class SendgridBackend(BaseEmailBackend):
     '''Implements an email backend that uses sendgrid to send emails'''
+
     name = 'sendgrid'
 
     def __init__(self, host=None, api_user=None, api_key=None,
@@ -66,9 +68,13 @@ class SendgridBackend(BaseEmailBackend):
         headers = headers or {}
         auth = auth or ()
 
-        response = self.requests_session.post(
-            url, data=payload, headers=headers, auth=auth,
-        )
+        try:
+            response = self.requests_session.post(
+                url, data=payload, headers=headers, auth=auth,
+            )
+        except ConnectionError:
+            raise ServerException(500, {})
+
         return response
 
     def _send(self, message):
@@ -79,10 +85,10 @@ class SendgridBackend(BaseEmailBackend):
             url, payload=payload,
         )
 
-        if response.status_code == 400:
+        if response.status_code >= 500:
+            raise ServerException(response.status_code, {})
+        elif response.status_code >= 400:
             raise ClientException(response.status_code, response.json())
-        elif response.status_code >= 500:
-            raise ServerException(response.status_code, response.json())
 
         return response
 
@@ -108,18 +114,20 @@ class SendgridBackend(BaseEmailBackend):
 
 class MailgunBackend(BaseEmailBackend):
     '''Implements an email backend that uses mailgun to send emails'''
+
     name = 'mailgun'
 
     def __init__(self, host=None, api_user=None, api_key=None,
-                 requests_session=None):
+                 requests_session=None, domain=None):
         '''Initialises with mailgun config'''
         self.host = host or app.config['MAILGUN_HOST']
         self.api_user = api_user or app.config['MAILGUN_USER']
         self.api_key = api_key or app.config['MAILGUN_API_KEY']
         self.requests_session = requests_session or requests.Session()
+        self.domain = domain or app.config['EMAIL_DOMAIN']
         self.api_urls = {
             'send_email': '/v2/{domain}/messages'.format(
-                domain='tapandita.com',
+                domain=self.domain,
             ),
         }
 
@@ -152,9 +160,13 @@ class MailgunBackend(BaseEmailBackend):
         headers = headers or {}
         auth = auth or ()
 
-        response = self.requests_session.post(
-            url, data=payload, headers=headers, auth=auth,
-        )
+        try:
+            response = self.requests_session.post(
+                url, data=payload, headers=headers, auth=auth,
+            )
+        except ConnectionError:
+            raise ServerException(500, {})
+
         return response
 
     def _send(self, message):
@@ -168,8 +180,10 @@ class MailgunBackend(BaseEmailBackend):
 
         if response.status_code == 400:
             raise ClientException(response.status_code, response.json())
+        elif response.status_code in [401, 402, 404]:
+            raise ServerException(response.status_code, {})
         elif response.status_code >= 500:
-            raise ServerException(response.status_code, response.json())
+            raise ServerException(response.status_code, {})
 
         return response
 
